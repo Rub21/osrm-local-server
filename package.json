@@ -1,11 +1,11 @@
 {
-  "name": "osrm-express-server",
+  "name": "osrm-local-server",
   "version": "1.0.0",
   "description": "Express server wrapping OSRM",
   "main": "src/run.js",
   "license": "MIT",
   "scripts": {
-    "start": "node src/run.js",
+    "start": "node src/index.js",
     "lint": "eslint --max-warnings=0 src test",
     "fix": "eslint --fix src test",
     "test": "tape test/*.js | tap-summary"
@@ -14,9 +14,12 @@
     "node": ">=6.0.0"
   },
   "dependencies": {
+    "bluebird": "^3.5.1",
     "body-parser": "^1.18.2",
     "cors": "^2.8.4",
+    "executive": "^1.5.13",
     "express": "^4.16.2",
+    "fs-extra": "^5.0.0",
     "helmet": "^3.9.0",
     "logfmt": "^1.2.0",
     "osrm": "5.16.1"
