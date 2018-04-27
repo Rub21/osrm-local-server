@@ -1,9 +1,7 @@
 {
   "name": "osrm-local-server",
   "version": "1.0.0",
-  "description": "Express server wrapping OSRM",
-  "main": "src/run.js",
-  "license": "MIT",
+  "main": "src/index.js",
   "scripts": {
     "start": "node src/index.js",
     "lint": "eslint --max-warnings=0 src test",

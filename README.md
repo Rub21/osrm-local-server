@@ -1,5 +1,6 @@
 # OSRM local server
 
+From : https://github.com/door2door-io/osrm-express-server-demo
 
 ## Setup  OSRM containers
 
@@ -10,30 +11,13 @@
 
 ## Data preprocessing
 
-
-`mkdir data`
-
-Download the data fom OSM and save it as tr.osm file.
-
-
-
-
-
-## Create a routable graph
-
-
 ```
-
+mkdir data/
+wget https://www.dropbox.com/s/ecefm53ykenwd3n/tr.osm  -O data/tr.osm
 docker run -it -v $(pwd)/data:/data osrm/osrm-backend:v5.16.4 osrm-extract -p /opt/car.lua /data/tr.osm
 docker run -it -v $(pwd)/data:/data osrm/osrm-backend:v5.16.4 osrm-contract /data/tr.osrm
 
-
 ```
-
-
-
-
-Improvements from : [osrm-express-server-demo](https://github.com/door2door-io/osrm-express-server-demo)
 
 ### Requerimentes
 
