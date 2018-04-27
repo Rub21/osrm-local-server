@@ -34,7 +34,10 @@ router.get("/", (req, res) => {
       2573525834
     ]
   };
-  ignoreSegment(way, './data', function() {
+  ignoreSegment(way, './data', function(error, res) {
+    if (error) return res.json({
+      error: 'error processing the data'
+    });
     return res.json(way);
   });
 });
@@ -43,7 +46,6 @@ router.get("/", (req, res) => {
 function createSpeedProfile(speedProfileFile, way) {
   return new Promise((resolve, reject) => {
     const file = fs.createWriteStream(speedProfileFile);
-
     file
       .on('open', () => {
         // Compute traffic profile.
@@ -67,27 +69,23 @@ function createSpeedProfile(speedProfileFile, way) {
 function ignoreSegment(way, osrmFolder, cb) {
   const identifier = way.id;
   const speedProfileFile = `data/speed-${identifier}.csv`;
-  const rootPath = path.resolve(__dirname, '../');
+  const rootPath = path.resolve(__dirname, '../../');
   // The dockerVolMount depends on whether we're running this from another docker
-  // container or directly. See docker-compose.yml for an explanantion.
   const dockerVolMount = rootPath;
   // Paths for the files depending from where this is being run.
-  // const pathOSRM = ROOT_DIR ? osrmFolder.replace(rootPath, ROOT_DIR) : osrmFolder;
   const pathSpeedProf = speedProfileFile;
-  // tStart(`WAY ${identifier} traffic profile`)();
   createSpeedProfile(speedProfileFile, way)
     .then(function() {
-      console.log('creo el csv');
-      var command = [
+      const command = [
         'docker',
         'run',
         '--rm',
         '-t',
         '-v',
-        '/Users/ruben/apps/osrm-local-server/data:/data',
+        `${dockerVolMount}/data:/data`,
         'osrm/osrm-backend:v5.16.4',
         'osrm-contract',
-        '--segment-speed-file', '/'+pathSpeedProf,
+        '--segment-speed-file', '/' + pathSpeedProf,
         `/data/tr.osrm`
       ];
       console.log(command.join(' '));
@@ -95,10 +93,11 @@ function ignoreSegment(way, osrmFolder, cb) {
         if (error) {
           console.log(error)
         } else {
-          console.log('ok....')
-          cb()
+          cb(null, 'ok')
         }
       });
+    }).catch(function(error) {
+      cb(error, null)
     });
 }
 
