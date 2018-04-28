@@ -4,22 +4,31 @@ const fs = require('fs-extra');
 const path = require('path');
 const Promise = require('bluebird');
 const exec = require('executive');
+const osmInfo = require('./../helpers/osmInfo');
+const csvProfilePath = './data';
 
 const router = express.Router();
-//Only admin can req this endpoint
-router.get("/", (req, res) => {
-  const ways = getWays(req);
-  ignoreSegment(ways, './data', function(error, resp) {
-    if (error) return res.json({
-      error: 'error processing the data'
-    });
-    return res.json({
-      resp,
-      ways
+/**
+ * Only admin can req this endpoint
+  example: 
+  body={
+    "ways":[448220597,90564392]
+  }
+ */
+
+router.post("/", (req, res) => {
+  getWays(req, function(ways) {
+    ignoreSegment(ways, csvProfilePath, function(error, resp) {
+      if (error) return res.json({
+        error: 'error processing the data'
+      });
+      return res.json({
+        resp,
+        ways
+      });
     });
   });
 });
-
 
 function createSpeedProfile(speedProfileFile, ways) {
   return new Promise((resolve, reject) => {
@@ -70,7 +79,7 @@ function ignoreSegment(ways, osrmFolder, cb) {
         `${dockerVolMount}/data:/data`,
         'osrm/osrm-backend:v5.16.4',
         'osrm-contract',
-        '--segment-speed-file', 
+        '--segment-speed-file',
         '/data/speed.csv',
         '--core 0.8',
         `/data/tr.osrm`
@@ -89,87 +98,27 @@ function ignoreSegment(ways, osrmFolder, cb) {
 }
 
 
-function getWays(req) {
+function getWays(req, cb) {
   // https://www.openstreetmap.org/way/448220597#map=19/-8.11742/-79.01687&layers=D
   // https://www.openstreetmap.org/way/90564392#map=17/-8.10327/-79.01803&layers=D
-  var way1 = {
-    id: 90564392,
-    nodes: [4452550921,
-      4452550922,
-      1098601537,
-      1051000245,
-      5483345195,
-      1098620120,
-      1088227476,
-      1098585235,
-      1098641105,
-      1098641400,
-      1088227388,
-      1098647854,
-      1098635414,
-      1098584127,
-      1098639238,
-      1098633083,
-      1098622426,
-      5478475745,
-      5476546741,
-      2573525834
-    ]
-  };
-
-  var way2 = {
-    id: 448220597,
-    nodes: [
-      4452550922,
-      4452550920,
-      1051000208,
-      1026647093,
-      316265136,
-      4706097947,
-      316265135,
-      316265134,
-      316265133,
-      316265132,
-      5086618919,
-      1026647572,
-      316265131,
-      316265129,
-      1026647527,
-      316265126,
-      316265124,
-      1098627620,
-      316265122,
-      1088227255,
-      1098594792,
-      1098634071,
-      1026647227,
-      1026646809,
-      316265120,
-      1088227326,
-      1098633802,
-      316265119,
-      316265118,
-      1015347808,
-      1015292423,
-      1098595328,
-      316488151,
-      316265117,
-      1098617316,
-      316265116,
-      1098612124,
-      1098632182,
-      2604839551,
-      1098589459,
-      320114996,
-      1098613378,
-      1098594789,
-      3670684735,
-      1088227350,
-      3670684731
-    ]
-  };
-
-  return [way1, way2];
+  var ways = [];
+  var waysIds = req.body.ways;
+  var index = 0;
+  findWay(waysIds[index]);
+  function findWay(wayId) {
+    var url = 'https://www.openstreetmap.org/api/0.6/way/' + wayId;
+    console.log(url)
+    osmInfo.getInfo(url, (data) => {
+      if ((index + 1) < waysIds.length) {
+        ways.push(data);
+        index++;
+        findWay(waysIds[index]);
+      } else {
+        ways.push(data);
+        cb(ways);
+      }
+    });
+  }
 }
 
 module.exports = router;

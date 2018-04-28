@@ -20,7 +20,9 @@
     "fs-extra": "^5.0.0",
     "helmet": "^3.9.0",
     "logfmt": "^1.2.0",
-    "osrm": "5.16.1"
+    "osrm": "5.16.1",
+    "request": "^2.85.0",
+    "xml2json": "^0.11.2"
   },
   "devDependencies": {
     "eslint": "^4.15.0",
