@@ -3,10 +3,10 @@
   "version": "1.0.0",
   "main": "src/index.js",
   "scripts": {
-    "start": "node src/index.js",
+    "start": "./node_modules/.bin/forever start -o out.log src/index.js && ./node_modules/.bin/forever list",
+    "stop": "./node_modules/.bin/forever stop src/index.js",
     "lint": "eslint --max-warnings=0 src test",
-    "fix": "eslint --fix src test",
-    "test": "tape test/*.js | tap-summary"
+    "fix": "eslint --fix src test"
   },
   "engines": {
     "node": ">=6.0.0"
@@ -17,6 +17,7 @@
     "cors": "^2.8.4",
     "executive": "^1.5.13",
     "express": "^4.16.2",
+    "forever": "^0.15.3",
     "fs-extra": "^5.0.0",
     "helmet": "^3.9.0",
     "logfmt": "^1.2.0",
