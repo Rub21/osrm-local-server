@@ -5,8 +5,10 @@ From : https://github.com/door2door-io/osrm-express-server-demo
 ## Setup  OSRM containers
 
 
-`docker build -t osmium-tool -f Dockerfile.osmium-tool .`
-`docker pull osrm/osrm-backend:v5.16.4`
+```
+docker build -t osmium-tool -f Dockerfile.osmium-tool .
+docker pull osrm/osrm-backend:v5.16.4
+```
 
 
 ## Data preprocessing
