@@ -26,9 +26,9 @@ module.exports.jsonbody = (json) => {
         json.osm.way.nd.forEach((element) => {
             way.nodes.push(element.ref);
         });
-        json.osm.way.tag.forEach((element) => {
-            way.tags[element.k] = element.v;
-        });
+        // json.osm.way.tag.forEach((element) => {
+        //     way.tags[element.k] = element.v;
+        // });
         return way;
     }
     if (json.osm.node) {

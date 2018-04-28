@@ -17,6 +17,7 @@ const router = express.Router();
  */
 
 router.post("/", (req, res) => {
+  console.log(req.body.ways)
   getWays(req, function(ways) {
     ignoreSegment(ways, csvProfilePath, function(error, resp) {
       if (error) return res.json({
@@ -31,6 +32,8 @@ router.post("/", (req, res) => {
 });
 
 function createSpeedProfile(speedProfileFile, ways) {
+  //to return back, we need to check here
+  var segments = [];
   return new Promise((resolve, reject) => {
     const file = fs.createWriteStream(speedProfileFile);
     file
@@ -39,20 +42,14 @@ function createSpeedProfile(speedProfileFile, ways) {
         // https://github.com/Project-OSRM/osrm-backend/wiki/Traffic
         for (var k = 0; k < ways.length; k++) {
           let way = ways[k]
-          if (k !== 0) {
-            file.write('\n');
-          }
           for (let i = 0; i < way.nodes.length - 2; i++) {
             const node = way.nodes[i];
             const nextNode = way.nodes[i + 1];
-            file.write(`${node},${nextNode},0\n`);
-            if (i + 3 === way.nodes.length) {
-              file.write(`${nextNode},${node},0`);
-            } else {
-              file.write(`${nextNode},${node},0\n`);
-            }
+            segments.push(`${node},${nextNode},0`);
+            segments.push(`${nextNode},${node},0`);
           }
         }
+        file.write(segments.join('\n'));
         file.end();
       })
       .on('error', err => reject(err))
@@ -105,6 +102,7 @@ function getWays(req, cb) {
   var waysIds = req.body.ways;
   var index = 0;
   findWay(waysIds[index]);
+
   function findWay(wayId) {
     var url = 'https://www.openstreetmap.org/api/0.6/way/' + wayId;
     console.log(url)
