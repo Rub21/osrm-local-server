@@ -1,9 +1,6 @@
 # OSRM local server
 
-From : https://github.com/door2door-io/osrm-express-server-demo
-
 ## Setup  OSRM containers
-
 
 ```
 docker build -t osmium-tool -f Dockerfile.osmium-tool .
