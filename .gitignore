@@ -23,3 +23,5 @@
 *.osrm.turn_duration_penalties
 *.osrm.turn_penalties_index
 *.osrm.turn_weight_penalties
+*.zip
+*.csv

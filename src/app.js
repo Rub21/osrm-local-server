@@ -4,13 +4,11 @@ const bodyParser = require("body-parser");
 const helmet = require("helmet");
 const logfmt = require("logfmt");
 const cors = require("cors");
-
 const health = require("./routes/health");
 const route = require("./routes/route");
 const table = require("./routes/table");
-
+const ignore = require("./routes/ignore");
 const osrmBindings = require("./lib/osrm");
-
 function configureMiddlewares(app) {
   app.use(helmet());
   app.use(bodyParser.json());
@@ -29,6 +27,7 @@ function configureRoutes(app) {
   app.use("/health", health);
   app.use("/table", table);
   app.use("/route/v1", route);
+  app.use("/ignore/v1", ignore);
 }
 
 function configureOSRM(app, options) {
