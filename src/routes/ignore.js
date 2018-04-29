@@ -1,34 +1,55 @@
-const express = require("express");
-const logfmt = require("logfmt");
+const express = require('express');
+const logfmt = require('logfmt');
 const fs = require('fs-extra');
 const path = require('path');
 const Promise = require('bluebird');
 const exec = require('executive');
 const osmInfo = require('./../helpers/osmInfo');
 const csvProfilePath = './data';
-
 const router = express.Router();
+//working with firebase
+var firebase = require('firebase');
+var app = firebase.initializeApp({
+  apiKey: 'AIzaSyBVJcbV9LSNh4ewiF1M9SR4eVslUNPKv_8',
+  authDomain: 'i-data-project.firebaseapp.com',
+  databaseURL: 'https://i-data-project.firebaseio.com',
+  projectId: 'i-data-project',
+  storageBucket: 'i-data-project.appspot.com',
+  messagingSenderId: '934125373941'
+});
+
 /**
  * Only admin can req this endpoint
   example: 
   body={
-    "ways":[448220597,90564392]
+    'ways':[448220597,90564392]
   }
  */
-router.post("/", (req, res) => {
-  req.body.ways = req.body.ways.map(Number);
-  console.log(req.body.ways);
-  getWays(req, function(ways) {
-    ignoreSegment(ways, csvProfilePath, function(error, resp) {
-      if (error) return res.json({
-        error: 'error processing the data'
+router.post('/', (req, res) => {
+  firebase.database()
+    .ref('features')
+    .orderByChild('properties/status')
+    .equalTo('validate')
+    .once('value')
+    .then(function(snapshot) {
+      var ways = []
+      snapshot.forEach(function(child) {
+        ways.push(child.val().properties.id.split('/')[1]);
       });
-      return res.json({
-        resp,
-        ways
+      req.body.ways = ways.map(Number);
+      console.log(req.body.ways);
+      getWays(req, function(ways) {
+        ignoreSegment(ways, csvProfilePath, function(error, resp) {
+          if (error) return res.json({
+            error: 'error processing the data'
+          });
+          return res.json({
+            resp,
+            ways
+          });
+        });
       });
     });
-  });
 });
 
 function createSpeedProfile(speedProfileFile, ways) {
