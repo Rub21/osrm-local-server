@@ -28,3 +28,7 @@ docker run -it -v $(pwd)/data:/data osrm/osrm-backend:v5.16.4 osrm-contract /dat
 npm start
 
 ```
+
+#### OSRM algorithm
+
+https://en.wikipedia.org/wiki/Contraction_hierarchies
