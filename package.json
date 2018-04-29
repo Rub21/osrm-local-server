@@ -17,6 +17,7 @@
     "cors": "^2.8.4",
     "executive": "^1.5.13",
     "express": "^4.16.2",
+    "firebase": "^4.13.1",
     "forever": "^0.15.3",
     "fs-extra": "^5.0.0",
     "helmet": "^3.9.0",
