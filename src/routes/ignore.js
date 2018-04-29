@@ -15,9 +15,9 @@ const router = express.Router();
     "ways":[448220597,90564392]
   }
  */
-
 router.post("/", (req, res) => {
-  console.log(req.body.ways)
+  req.body.ways = req.body.ways.map(Number);
+  console.log(req.body.ways);
   getWays(req, function(ways) {
     ignoreSegment(ways, csvProfilePath, function(error, resp) {
       if (error) return res.json({
