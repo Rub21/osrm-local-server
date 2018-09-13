@@ -1,6 +1,6 @@
 # OSRM local server
 
-## SEstablecer servidor
+## Establecer servidor
 
 ```
 docker build -t osmium-tool -f Dockerfile.osmium-tool .
